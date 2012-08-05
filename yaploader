@@ -222,6 +222,19 @@ class CommandGetAlbums:
         user = uploader.api.find_user(uploader.config.username)
         uploader._print_albums(user.albums)
 
+class CommandGetAlbumsCount:
+    name = 'albumscount'
+    description = 'Show albums count.'
+    option_list = [
+        Option('-u', '--user', dest='username',
+               help='User\'s login at Yandex.'),
+    ]
+    usage = _build_usage(name, option_list)
+
+    def run(self, uploader, opts, args):
+        user = uploader.api.find_user(uploader.config.username)
+        uploader._print_albums_count(user.albums)
+
 
 class CommandGetPhotos:
     name = 'photos'
@@ -421,6 +434,12 @@ class Uploader(object):
                     (i+1, album.title, album.id, image_count)
             else:
                 print '%i) "%s", %s' % (i+1, album.title, image_count)
+
+    def _print_albums_count(self, albums):
+	cnt=0
+	for i, album in enumerate(albums):
+		cnt = i+1
+        print cnt
 
     def _save_object(self, obj, update_from):
         for field in obj.fields:

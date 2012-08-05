@@ -11,20 +11,29 @@ dirs=${dirs/$src/}
 dirs=${dirs//\//}
 
 cd ..
+
+albumsCount=`./yaploader albumscount`
+
 #echo $dirs
 for dir in $dirs
 do
   echo uploading $dir
   ./yaploader create-album --title="$dir"
+  let "albumsCount = $albumsCount + 1"
 
-  files=`find "$src/$dir/" -iregex '.*\(jpg\|jpeg\|png\)' -printf '%f\n'`
+  files=`ls "$src/$dir/"`
+  filesCount=`ls "$src/$dir/" | wc -l`
+  fileIndex=0
   for file in $files
   do
+    let "fileIndex = $fileIndex + 1"
     filePath="$src/$dir/$file"
-    echo $filePath
-    ./yaploader upload -a 2 "$filePath"
+    echo "($fileIndex from $filesCount) $file"
+    uploadResult=`./yaploader upload -a $albumsCount "$filePath"`
+#    echo "ok"
     rm $filePath
+#    exit
   done
+  rmdir "$src/$dir"
 exit
 done
-
